@@ -36,8 +36,8 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
  *     int (*flush)(const char *, struct fuse_file_info *);
  *     int (*release)(const char *, struct fuse_file_info *);
  *     int (*fsync)(const char *, int, struct fuse_file_info *);
- *     int (*setxattr)(const char *, const char *, const char *, size_t, int);
- *     int (*getxattr)(const char *, const char *, char *, size_t);
+ *     int (*setxattr)(const char *, const char *, const char *, size_t, int, uint32_t);
+ *     int (*getxattr)(const char *, const char *, char *, size_t, uint32_t);
  *     int (*listxattr)(const char *, char *, size_t);
  *     int (*removexattr)(const char *, const char *);
  *     int (*opendir)(const char *, struct fuse_file_info *);
@@ -63,6 +63,19 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
  *     int (*read_buf)(const char *, struct fuse_bufvec **, size_t, off_t, struct fuse_file_info *);
  *     int (*flock)(const char *, struct fuse_file_info *, int);
  *     int (*fallocate)(const char *, int, off_t, off_t, struct fuse_file_info *);
+ *     int (*reserved00)(void *, void *, void *, void *, void *, void *, void *, void *);
+ *     void (*monitor)(const char *, uint32_t);
+ *     int (*renamex)(const char *, const char *, unsigned int);
+ *     int (*statfs_x)(const char *, struct statfs *);
+ *     int (*setvolname)(const char *);
+ *     int (*exchange)(const char *, const char *, unsigned long);
+ *     int (*getxtimes)(const char *, struct timespec *, struct timespec *);
+ *     int (*setbkuptime)(const char *, const struct timespec *);
+ *     int (*setchgtime)(const char *, const struct timespec *);
+ *     int (*setcrtime)(const char *, const struct timespec *);
+ *     int (*chflags)(const char *, uint32_t);
+ *     int (*setattr_x)(const char *, struct setattr_x *);
+ *     int (*fsetattr_x)(const char *, struct setattr_x *, struct fuse_file_info *);
  * }
  * }
  */
@@ -117,7 +130,20 @@ public class fuse_operations {
         fuse_h.C_POINTER.withName("write_buf"),
         fuse_h.C_POINTER.withName("read_buf"),
         fuse_h.C_POINTER.withName("flock"),
-        fuse_h.C_POINTER.withName("fallocate")
+        fuse_h.C_POINTER.withName("fallocate"),
+        fuse_h.C_POINTER.withName("reserved00"),
+        fuse_h.C_POINTER.withName("monitor"),
+        fuse_h.C_POINTER.withName("renamex"),
+        fuse_h.C_POINTER.withName("statfs_x"),
+        fuse_h.C_POINTER.withName("setvolname"),
+        fuse_h.C_POINTER.withName("exchange"),
+        fuse_h.C_POINTER.withName("getxtimes"),
+        fuse_h.C_POINTER.withName("setbkuptime"),
+        fuse_h.C_POINTER.withName("setchgtime"),
+        fuse_h.C_POINTER.withName("setcrtime"),
+        fuse_h.C_POINTER.withName("chflags"),
+        fuse_h.C_POINTER.withName("setattr_x"),
+        fuse_h.C_POINTER.withName("fsetattr_x")
     ).withName("fuse_operations");
 
     /**
@@ -2217,12 +2243,115 @@ public class fuse_operations {
 
     /**
      * {@snippet lang=c :
-     * int (*setxattr)(const char *, const char *, const char *, size_t, int)
+     * int (*setxattr)(const char *, const char *, const char *, size_t, int, uint32_t)
      * }
      */
     public static class setxattr {
 
         setxattr() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, long _x3, int _x4, int _x5);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_LONG,
+            fuse_h.C_INT,
+            fuse_h.C_INT
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(setxattr.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(setxattr.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, long _x3, int _x4, int _x5) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2, _x3, _x4, _x5);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout setxattr$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("setxattr"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*setxattr)(const char *, const char *, const char *, size_t, int, uint32_t)
+     * }
+     */
+    public static final AddressLayout setxattr$layout() {
+        return setxattr$LAYOUT;
+    }
+
+    private static final long setxattr$OFFSET = 168;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*setxattr)(const char *, const char *, const char *, size_t, int, uint32_t)
+     * }
+     */
+    public static final long setxattr$offset() {
+        return setxattr$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*setxattr)(const char *, const char *, const char *, size_t, int, uint32_t)
+     * }
+     */
+    public static MemorySegment setxattr(MemorySegment struct) {
+        return struct.get(setxattr$LAYOUT, setxattr$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*setxattr)(const char *, const char *, const char *, size_t, int, uint32_t)
+     * }
+     */
+    public static void setxattr(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(setxattr$LAYOUT, setxattr$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*getxattr)(const char *, const char *, char *, size_t, uint32_t)
+     * }
+     */
+    public static class getxattr {
+
+        getxattr() {
             // Should not be called directly
         }
 
@@ -2249,13 +2378,13 @@ public class fuse_operations {
             return $DESC;
         }
 
-        private static final MethodHandle UP$MH = fuse_h.upcallHandle(setxattr.Function.class, "apply", $DESC);
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(getxattr.Function.class, "apply", $DESC);
 
         /**
          * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
          * The lifetime of the returned segment is managed by {@code arena}
          */
-        public static MemorySegment allocate(setxattr.Function fi, Arena arena) {
+        public static MemorySegment allocate(getxattr.Function fi, Arena arena) {
             return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
         }
 
@@ -2273,113 +2402,12 @@ public class fuse_operations {
         }
     }
 
-    private static final AddressLayout setxattr$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("setxattr"));
-
-    /**
-     * Layout for field:
-     * {@snippet lang=c :
-     * int (*setxattr)(const char *, const char *, const char *, size_t, int)
-     * }
-     */
-    public static final AddressLayout setxattr$layout() {
-        return setxattr$LAYOUT;
-    }
-
-    private static final long setxattr$OFFSET = 168;
-
-    /**
-     * Offset for field:
-     * {@snippet lang=c :
-     * int (*setxattr)(const char *, const char *, const char *, size_t, int)
-     * }
-     */
-    public static final long setxattr$offset() {
-        return setxattr$OFFSET;
-    }
-
-    /**
-     * Getter for field:
-     * {@snippet lang=c :
-     * int (*setxattr)(const char *, const char *, const char *, size_t, int)
-     * }
-     */
-    public static MemorySegment setxattr(MemorySegment struct) {
-        return struct.get(setxattr$LAYOUT, setxattr$OFFSET);
-    }
-
-    /**
-     * Setter for field:
-     * {@snippet lang=c :
-     * int (*setxattr)(const char *, const char *, const char *, size_t, int)
-     * }
-     */
-    public static void setxattr(MemorySegment struct, MemorySegment fieldValue) {
-        struct.set(setxattr$LAYOUT, setxattr$OFFSET, fieldValue);
-    }
-
-    /**
-     * {@snippet lang=c :
-     * int (*getxattr)(const char *, const char *, char *, size_t)
-     * }
-     */
-    public static class getxattr {
-
-        getxattr() {
-            // Should not be called directly
-        }
-
-        /**
-         * The function pointer signature, expressed as a functional interface
-         */
-        public interface Function {
-            int apply(MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, long _x3);
-        }
-
-        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
-            fuse_h.C_INT,
-            fuse_h.C_POINTER,
-            fuse_h.C_POINTER,
-            fuse_h.C_POINTER,
-            fuse_h.C_LONG
-        );
-
-        /**
-         * The descriptor of this function pointer
-         */
-        public static FunctionDescriptor descriptor() {
-            return $DESC;
-        }
-
-        private static final MethodHandle UP$MH = fuse_h.upcallHandle(getxattr.Function.class, "apply", $DESC);
-
-        /**
-         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
-         * The lifetime of the returned segment is managed by {@code arena}
-         */
-        public static MemorySegment allocate(getxattr.Function fi, Arena arena) {
-            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
-        }
-
-        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
-
-        /**
-         * Invoke the upcall stub {@code funcPtr}, with given parameters
-         */
-        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, long _x3) {
-            try {
-                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2, _x3);
-            } catch (Throwable ex$) {
-                throw new AssertionError("should not reach here", ex$);
-            }
-        }
-    }
-
     private static final AddressLayout getxattr$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("getxattr"));
 
     /**
      * Layout for field:
      * {@snippet lang=c :
-     * int (*getxattr)(const char *, const char *, char *, size_t)
+     * int (*getxattr)(const char *, const char *, char *, size_t, uint32_t)
      * }
      */
     public static final AddressLayout getxattr$layout() {
@@ -2391,7 +2419,7 @@ public class fuse_operations {
     /**
      * Offset for field:
      * {@snippet lang=c :
-     * int (*getxattr)(const char *, const char *, char *, size_t)
+     * int (*getxattr)(const char *, const char *, char *, size_t, uint32_t)
      * }
      */
     public static final long getxattr$offset() {
@@ -2401,7 +2429,7 @@ public class fuse_operations {
     /**
      * Getter for field:
      * {@snippet lang=c :
-     * int (*getxattr)(const char *, const char *, char *, size_t)
+     * int (*getxattr)(const char *, const char *, char *, size_t, uint32_t)
      * }
      */
     public static MemorySegment getxattr(MemorySegment struct) {
@@ -2411,7 +2439,7 @@ public class fuse_operations {
     /**
      * Setter for field:
      * {@snippet lang=c :
-     * int (*getxattr)(const char *, const char *, char *, size_t)
+     * int (*getxattr)(const char *, const char *, char *, size_t, uint32_t)
      * }
      */
     public static void getxattr(MemorySegment struct, MemorySegment fieldValue) {
@@ -4521,6 +4549,1301 @@ public class fuse_operations {
     }
 
     /**
+     * {@snippet lang=c :
+     * int (*reserved00)(void *, void *, void *, void *, void *, void *, void *, void *)
+     * }
+     */
+    public static class reserved00 {
+
+        reserved00() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, MemorySegment _x3, MemorySegment _x4, MemorySegment _x5, MemorySegment _x6, MemorySegment _x7);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(reserved00.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(reserved00.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, MemorySegment _x3, MemorySegment _x4, MemorySegment _x5, MemorySegment _x6, MemorySegment _x7) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2, _x3, _x4, _x5, _x6, _x7);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout reserved00$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("reserved00"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*reserved00)(void *, void *, void *, void *, void *, void *, void *, void *)
+     * }
+     */
+    public static final AddressLayout reserved00$layout() {
+        return reserved00$LAYOUT;
+    }
+
+    private static final long reserved00$OFFSET = 360;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*reserved00)(void *, void *, void *, void *, void *, void *, void *, void *)
+     * }
+     */
+    public static final long reserved00$offset() {
+        return reserved00$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*reserved00)(void *, void *, void *, void *, void *, void *, void *, void *)
+     * }
+     */
+    public static MemorySegment reserved00(MemorySegment struct) {
+        return struct.get(reserved00$LAYOUT, reserved00$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*reserved00)(void *, void *, void *, void *, void *, void *, void *, void *)
+     * }
+     */
+    public static void reserved00(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(reserved00$LAYOUT, reserved00$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void (*monitor)(const char *, uint32_t)
+     * }
+     */
+    public static class monitor {
+
+        monitor() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            void apply(MemorySegment _x0, int _x1);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.ofVoid(
+            fuse_h.C_POINTER,
+            fuse_h.C_INT
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(monitor.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(monitor.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static void invoke(MemorySegment funcPtr,MemorySegment _x0, int _x1) {
+            try {
+                 DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout monitor$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("monitor"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * void (*monitor)(const char *, uint32_t)
+     * }
+     */
+    public static final AddressLayout monitor$layout() {
+        return monitor$LAYOUT;
+    }
+
+    private static final long monitor$OFFSET = 368;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * void (*monitor)(const char *, uint32_t)
+     * }
+     */
+    public static final long monitor$offset() {
+        return monitor$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * void (*monitor)(const char *, uint32_t)
+     * }
+     */
+    public static MemorySegment monitor(MemorySegment struct) {
+        return struct.get(monitor$LAYOUT, monitor$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * void (*monitor)(const char *, uint32_t)
+     * }
+     */
+    public static void monitor(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(monitor$LAYOUT, monitor$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*renamex)(const char *, const char *, unsigned int)
+     * }
+     */
+    public static class renamex {
+
+        renamex() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1, int _x2);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_INT
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(renamex.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(renamex.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, int _x2) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout renamex$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("renamex"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*renamex)(const char *, const char *, unsigned int)
+     * }
+     */
+    public static final AddressLayout renamex$layout() {
+        return renamex$LAYOUT;
+    }
+
+    private static final long renamex$OFFSET = 376;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*renamex)(const char *, const char *, unsigned int)
+     * }
+     */
+    public static final long renamex$offset() {
+        return renamex$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*renamex)(const char *, const char *, unsigned int)
+     * }
+     */
+    public static MemorySegment renamex(MemorySegment struct) {
+        return struct.get(renamex$LAYOUT, renamex$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*renamex)(const char *, const char *, unsigned int)
+     * }
+     */
+    public static void renamex(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(renamex$LAYOUT, renamex$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*statfs_x)(const char *, struct statfs *)
+     * }
+     */
+    public static class statfs_x {
+
+        statfs_x() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(statfs_x.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(statfs_x.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout statfs_x$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("statfs_x"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*statfs_x)(const char *, struct statfs *)
+     * }
+     */
+    public static final AddressLayout statfs_x$layout() {
+        return statfs_x$LAYOUT;
+    }
+
+    private static final long statfs_x$OFFSET = 384;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*statfs_x)(const char *, struct statfs *)
+     * }
+     */
+    public static final long statfs_x$offset() {
+        return statfs_x$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*statfs_x)(const char *, struct statfs *)
+     * }
+     */
+    public static MemorySegment statfs_x(MemorySegment struct) {
+        return struct.get(statfs_x$LAYOUT, statfs_x$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*statfs_x)(const char *, struct statfs *)
+     * }
+     */
+    public static void statfs_x(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(statfs_x$LAYOUT, statfs_x$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*setvolname)(const char *)
+     * }
+     */
+    public static class setvolname {
+
+        setvolname() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(setvolname.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(setvolname.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout setvolname$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("setvolname"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*setvolname)(const char *)
+     * }
+     */
+    public static final AddressLayout setvolname$layout() {
+        return setvolname$LAYOUT;
+    }
+
+    private static final long setvolname$OFFSET = 392;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*setvolname)(const char *)
+     * }
+     */
+    public static final long setvolname$offset() {
+        return setvolname$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*setvolname)(const char *)
+     * }
+     */
+    public static MemorySegment setvolname(MemorySegment struct) {
+        return struct.get(setvolname$LAYOUT, setvolname$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*setvolname)(const char *)
+     * }
+     */
+    public static void setvolname(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(setvolname$LAYOUT, setvolname$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*exchange)(const char *, const char *, unsigned long)
+     * }
+     */
+    public static class exchange {
+
+        exchange() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1, long _x2);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_LONG
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(exchange.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(exchange.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, long _x2) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout exchange$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("exchange"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*exchange)(const char *, const char *, unsigned long)
+     * }
+     */
+    public static final AddressLayout exchange$layout() {
+        return exchange$LAYOUT;
+    }
+
+    private static final long exchange$OFFSET = 400;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*exchange)(const char *, const char *, unsigned long)
+     * }
+     */
+    public static final long exchange$offset() {
+        return exchange$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*exchange)(const char *, const char *, unsigned long)
+     * }
+     */
+    public static MemorySegment exchange(MemorySegment struct) {
+        return struct.get(exchange$LAYOUT, exchange$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*exchange)(const char *, const char *, unsigned long)
+     * }
+     */
+    public static void exchange(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(exchange$LAYOUT, exchange$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*getxtimes)(const char *, struct timespec *, struct timespec *)
+     * }
+     */
+    public static class getxtimes {
+
+        getxtimes() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1, MemorySegment _x2);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(getxtimes.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(getxtimes.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, MemorySegment _x2) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout getxtimes$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("getxtimes"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*getxtimes)(const char *, struct timespec *, struct timespec *)
+     * }
+     */
+    public static final AddressLayout getxtimes$layout() {
+        return getxtimes$LAYOUT;
+    }
+
+    private static final long getxtimes$OFFSET = 408;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*getxtimes)(const char *, struct timespec *, struct timespec *)
+     * }
+     */
+    public static final long getxtimes$offset() {
+        return getxtimes$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*getxtimes)(const char *, struct timespec *, struct timespec *)
+     * }
+     */
+    public static MemorySegment getxtimes(MemorySegment struct) {
+        return struct.get(getxtimes$LAYOUT, getxtimes$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*getxtimes)(const char *, struct timespec *, struct timespec *)
+     * }
+     */
+    public static void getxtimes(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(getxtimes$LAYOUT, getxtimes$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*setbkuptime)(const char *, const struct timespec *)
+     * }
+     */
+    public static class setbkuptime {
+
+        setbkuptime() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(setbkuptime.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(setbkuptime.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout setbkuptime$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("setbkuptime"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*setbkuptime)(const char *, const struct timespec *)
+     * }
+     */
+    public static final AddressLayout setbkuptime$layout() {
+        return setbkuptime$LAYOUT;
+    }
+
+    private static final long setbkuptime$OFFSET = 416;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*setbkuptime)(const char *, const struct timespec *)
+     * }
+     */
+    public static final long setbkuptime$offset() {
+        return setbkuptime$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*setbkuptime)(const char *, const struct timespec *)
+     * }
+     */
+    public static MemorySegment setbkuptime(MemorySegment struct) {
+        return struct.get(setbkuptime$LAYOUT, setbkuptime$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*setbkuptime)(const char *, const struct timespec *)
+     * }
+     */
+    public static void setbkuptime(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(setbkuptime$LAYOUT, setbkuptime$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*setchgtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static class setchgtime {
+
+        setchgtime() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(setchgtime.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(setchgtime.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout setchgtime$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("setchgtime"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*setchgtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static final AddressLayout setchgtime$layout() {
+        return setchgtime$LAYOUT;
+    }
+
+    private static final long setchgtime$OFFSET = 424;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*setchgtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static final long setchgtime$offset() {
+        return setchgtime$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*setchgtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static MemorySegment setchgtime(MemorySegment struct) {
+        return struct.get(setchgtime$LAYOUT, setchgtime$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*setchgtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static void setchgtime(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(setchgtime$LAYOUT, setchgtime$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*setcrtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static class setcrtime {
+
+        setcrtime() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(setcrtime.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(setcrtime.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout setcrtime$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("setcrtime"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*setcrtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static final AddressLayout setcrtime$layout() {
+        return setcrtime$LAYOUT;
+    }
+
+    private static final long setcrtime$OFFSET = 432;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*setcrtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static final long setcrtime$offset() {
+        return setcrtime$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*setcrtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static MemorySegment setcrtime(MemorySegment struct) {
+        return struct.get(setcrtime$LAYOUT, setcrtime$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*setcrtime)(const char *, const struct timespec *)
+     * }
+     */
+    public static void setcrtime(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(setcrtime$LAYOUT, setcrtime$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*chflags)(const char *, uint32_t)
+     * }
+     */
+    public static class chflags {
+
+        chflags() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, int _x1);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_INT
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(chflags.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(chflags.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, int _x1) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout chflags$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("chflags"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*chflags)(const char *, uint32_t)
+     * }
+     */
+    public static final AddressLayout chflags$layout() {
+        return chflags$LAYOUT;
+    }
+
+    private static final long chflags$OFFSET = 440;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*chflags)(const char *, uint32_t)
+     * }
+     */
+    public static final long chflags$offset() {
+        return chflags$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*chflags)(const char *, uint32_t)
+     * }
+     */
+    public static MemorySegment chflags(MemorySegment struct) {
+        return struct.get(chflags$LAYOUT, chflags$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*chflags)(const char *, uint32_t)
+     * }
+     */
+    public static void chflags(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(chflags$LAYOUT, chflags$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*setattr_x)(const char *, struct setattr_x *)
+     * }
+     */
+    public static class setattr_x {
+
+        setattr_x() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(setattr_x.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(setattr_x.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout setattr_x$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("setattr_x"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*setattr_x)(const char *, struct setattr_x *)
+     * }
+     */
+    public static final AddressLayout setattr_x$layout() {
+        return setattr_x$LAYOUT;
+    }
+
+    private static final long setattr_x$OFFSET = 448;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*setattr_x)(const char *, struct setattr_x *)
+     * }
+     */
+    public static final long setattr_x$offset() {
+        return setattr_x$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*setattr_x)(const char *, struct setattr_x *)
+     * }
+     */
+    public static MemorySegment setattr_x(MemorySegment struct) {
+        return struct.get(setattr_x$LAYOUT, setattr_x$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*setattr_x)(const char *, struct setattr_x *)
+     * }
+     */
+    public static void setattr_x(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(setattr_x$LAYOUT, setattr_x$OFFSET, fieldValue);
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int (*fsetattr_x)(const char *, struct setattr_x *, struct fuse_file_info *)
+     * }
+     */
+    public static class fsetattr_x {
+
+        fsetattr_x() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1, MemorySegment _x2);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            fuse_h.C_INT,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER,
+            fuse_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = fuse_h.upcallHandle(fsetattr_x.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(fsetattr_x.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, MemorySegment _x2) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static final AddressLayout fsetattr_x$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("fsetattr_x"));
+
+    /**
+     * Layout for field:
+     * {@snippet lang=c :
+     * int (*fsetattr_x)(const char *, struct setattr_x *, struct fuse_file_info *)
+     * }
+     */
+    public static final AddressLayout fsetattr_x$layout() {
+        return fsetattr_x$LAYOUT;
+    }
+
+    private static final long fsetattr_x$OFFSET = 456;
+
+    /**
+     * Offset for field:
+     * {@snippet lang=c :
+     * int (*fsetattr_x)(const char *, struct setattr_x *, struct fuse_file_info *)
+     * }
+     */
+    public static final long fsetattr_x$offset() {
+        return fsetattr_x$OFFSET;
+    }
+
+    /**
+     * Getter for field:
+     * {@snippet lang=c :
+     * int (*fsetattr_x)(const char *, struct setattr_x *, struct fuse_file_info *)
+     * }
+     */
+    public static MemorySegment fsetattr_x(MemorySegment struct) {
+        return struct.get(fsetattr_x$LAYOUT, fsetattr_x$OFFSET);
+    }
+
+    /**
+     * Setter for field:
+     * {@snippet lang=c :
+     * int (*fsetattr_x)(const char *, struct setattr_x *, struct fuse_file_info *)
+     * }
+     */
+    public static void fsetattr_x(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(fsetattr_x$LAYOUT, fsetattr_x$OFFSET, fieldValue);
+    }
+
+    /**
      * Obtains a slice of {@code arrayParam} which selects the array element at {@code index}.
      * The returned segment has address {@code arrayParam.address() + index * layout().byteSize()}
      */
@@ -4549,7 +5872,7 @@ public class fuse_operations {
     }
 
     /**
-     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction) (if any).
+     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction} (if any).
      * The returned segment has size {@code layout().byteSize()}
      */
     public static MemorySegment reinterpret(MemorySegment addr, Arena arena, Consumer<MemorySegment> cleanup) {
@@ -4557,7 +5880,7 @@ public class fuse_operations {
     }
 
     /**
-     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction) (if any).
+     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction} (if any).
      * The returned segment has size {@code elementCount * layout().byteSize()}
      */
     public static MemorySegment reinterpret(MemorySegment addr, long elementCount, Arena arena, Consumer<MemorySegment> cleanup) {

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -71,6 +72,18 @@ public class FuseImplTest {
 
 			fuseH.verify(() -> fuse_h.fuse_new(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.anyLong(), Mockito.any()), Mockito.never());
 			Assertions.assertEquals("fuse_mount failed", thrown.getMessage());
+		}
+
+		@Test
+		@DisplayName("fuse_new receives the size of the Darwin fuse_operations struct")
+		public void testFuseNewOpSize() {
+			var opSize = ArgumentCaptor.forClass(Long.class);
+			fuseH.when(() -> fuse_h.fuse_mount(Mockito.any(), Mockito.any())).thenReturn(MemorySegment.ofAddress(42L));
+			fuseH.when(() -> fuse_h.fuse_new(Mockito.any(), Mockito.any(), Mockito.any(), opSize.capture(), Mockito.any())).thenReturn(MemorySegment.NULL);
+
+			Assertions.assertThrows(FuseMountFailedException.class, () -> fuseImplSpy.mount(args));
+
+			Assertions.assertEquals(464L, opSize.getValue());
 		}
 
 	}
@@ -234,7 +247,7 @@ public class FuseImplTest {
 
 				Mockito.doReturn(42).when(fuseOps).getxattr(Mockito.eq("/foo"), Mockito.eq("bar"), Mockito.any());
 
-				var result = fuseImpl.getxattr(path, name, value, 100);
+				var result = fuseImpl.getxattr(path, name, value, 100, 0);
 
 				Assertions.assertEquals(42, result);
 			}
@@ -250,7 +263,7 @@ public class FuseImplTest {
 
 				Mockito.doReturn(42).when(fuseOps).setxattr(Mockito.eq("/foo"), Mockito.eq("bar"), Mockito.any(), Mockito.anyInt());
 
-				var result = fuseImpl.setxattr(path, name, value, 100, 0xDEADBEEF);
+				var result = fuseImpl.setxattr(path, name, value, 100, 0xDEADBEEF, 0);
 
 				Assertions.assertEquals(42, result);
 			}

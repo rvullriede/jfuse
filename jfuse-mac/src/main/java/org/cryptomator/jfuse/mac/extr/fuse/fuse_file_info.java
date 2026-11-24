@@ -23,7 +23,9 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
  *     unsigned int flush : 1;
  *     unsigned int nonseekable : 1;
  *     unsigned int flock_release : 1;
- *     unsigned int padding : 27;
+ *     unsigned int padding : 25;
+ *     unsigned int purge_attr : 1;
+ *     unsigned int purge_ubc : 1;
  *     uint64_t fh;
  *     uint64_t lock_owner;
  * }
@@ -301,7 +303,7 @@ public class fuse_file_info {
     }
 
     /**
-     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction) (if any).
+     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction} (if any).
      * The returned segment has size {@code layout().byteSize()}
      */
     public static MemorySegment reinterpret(MemorySegment addr, Arena arena, Consumer<MemorySegment> cleanup) {
@@ -309,7 +311,7 @@ public class fuse_file_info {
     }
 
     /**
-     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction) (if any).
+     * Reinterprets {@code addr} using target {@code arena} and {@code cleanupAction} (if any).
      * The returned segment has size {@code elementCount * layout().byteSize()}
      */
     public static MemorySegment reinterpret(MemorySegment addr, long elementCount, Arena arena, Consumer<MemorySegment> cleanup) {

@@ -160,13 +160,13 @@ final class FuseImpl extends Fuse {
 	}
 
 	@VisibleForTesting
-	int getxattr(MemorySegment path, MemorySegment name, MemorySegment value, long size) {
+	int getxattr(MemorySegment path, MemorySegment name, MemorySegment value, long size, int position) {
 		var buffer = value.reinterpret(size).asByteBuffer();
 		return fuseOperations.getxattr(path.getString(0), name.getString(0), buffer);
 	}
 
 	@VisibleForTesting
-	int setxattr(MemorySegment path, MemorySegment name, MemorySegment value, long size, int flags) {
+	int setxattr(MemorySegment path, MemorySegment name, MemorySegment value, long size, int flags, int position) {
 		var buffer = value.reinterpret(size).asByteBuffer();
 		return fuseOperations.setxattr(path.getString(0), name.getString(0), buffer, flags);
 	}
