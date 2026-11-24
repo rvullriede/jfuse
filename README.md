@@ -68,6 +68,9 @@ Not all [`fuse_operations`](https://libfuse.github.io/doxygen/structfuse__operat
 | fallocate       | :x:                                     |
 | copy_file_range | :x:                                     |
 | lseek           | :x:                                     |
+| setcrtime       | :white_check_mark: (macOS only)         |
+| setchgtime      | :white_check_mark: (macOS only)         |
+| setbkuptime     | :white_check_mark: (macOS only)         |
 
 ## Usage
 
