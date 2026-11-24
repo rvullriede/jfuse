@@ -187,4 +187,19 @@ public interface FuseOperationsDecorator extends FuseOperations {
 		return delegate().utimens(path, atime, mtime, fi);
 	}
 
+	@Override
+	default int setcrtime(String path, TimeSpec crtime) {
+		return delegate().setcrtime(path, crtime);
+	}
+
+	@Override
+	default int setchgtime(String path, TimeSpec chgtime) {
+		return delegate().setchgtime(path, chgtime);
+	}
+
+	@Override
+	default int setbkuptime(String path, TimeSpec bkuptime) {
+		return delegate().setbkuptime(path, bkuptime);
+	}
+
 }

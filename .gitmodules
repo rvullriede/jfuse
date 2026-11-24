@@ -1,7 +1,7 @@
 [submodule "libfuse2"]
 	path = libfuse2
-	url = https://github.com/libfuse/libfuse.git
-	branch = fuse_2_9_bugfix
+	url = https://github.com/macfuse/library.git
+	branch = support/libfuse-2.9
 
 [submodule "libfuse3"]
 	path = libfuse3
