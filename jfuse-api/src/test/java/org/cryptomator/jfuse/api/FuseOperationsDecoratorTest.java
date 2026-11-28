@@ -309,4 +309,34 @@ public class FuseOperationsDecoratorTest {
 
 		Assertions.assertEquals(42, result);
 	}
+
+	@Test
+	public void setcrtime() {
+		var crtime = Mockito.mock(TimeSpec.class);
+		Mockito.doReturn(42).when(delegate).setcrtime(path, crtime);
+
+		var result = decorator.setcrtime(path, crtime);
+
+		Assertions.assertEquals(42, result);
+	}
+
+	@Test
+	public void setchgtime() {
+		var chgtime = Mockito.mock(TimeSpec.class);
+		Mockito.doReturn(42).when(delegate).setchgtime(path, chgtime);
+
+		var result = decorator.setchgtime(path, chgtime);
+
+		Assertions.assertEquals(42, result);
+	}
+
+	@Test
+	public void setbkuptime() {
+		var bkuptime = Mockito.mock(TimeSpec.class);
+		Mockito.doReturn(42).when(delegate).setbkuptime(path, bkuptime);
+
+		var result = decorator.setbkuptime(path, bkuptime);
+
+		Assertions.assertEquals(42, result);
+	}
 }

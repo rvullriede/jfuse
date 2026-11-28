@@ -37,6 +37,9 @@ public interface FuseOperations {
 		REMOVE_XATTR,
 		RENAME,
 		RMDIR,
+		SET_BKUPTIME,
+		SET_CHGTIME,
+		SET_CRTIME,
 		SET_XATTR,
 		STATFS,
 		SYMLINK,
@@ -632,6 +635,45 @@ public interface FuseOperations {
 	 * @return 0 on success or negated error code (-errno)
 	 */
 	default int utimens(String path, TimeSpec atime, TimeSpec mtime, @Nullable FileInfo fi) {
+		return -errno().enosys();
+	}
+
+	/**
+	 * Set the creation time of a file.
+	 * <p>
+	 * macOS only (macFUSE and FUSE-T).
+	 *
+	 * @param path file path
+	 * @param crtime the new creation time
+	 * @return 0 on success or negated error code (-errno)
+	 */
+	default int setcrtime(String path, TimeSpec crtime) {
+		return -errno().enosys();
+	}
+
+	/**
+	 * Set the change time of a file.
+	 * <p>
+	 * macOS only (macFUSE and FUSE-T).
+	 *
+	 * @param path file path
+	 * @param chgtime the new change time
+	 * @return 0 on success or negated error code (-errno)
+	 */
+	default int setchgtime(String path, TimeSpec chgtime) {
+		return -errno().enosys();
+	}
+
+	/**
+	 * Set the backup time of a file.
+	 * <p>
+	 * macOS only (macFUSE and FUSE-T).
+	 *
+	 * @param path file path
+	 * @param bkuptime the new backup time
+	 * @return 0 on success or negated error code (-errno)
+	 */
+	default int setbkuptime(String path, TimeSpec bkuptime) {
 		return -errno().enosys();
 	}
 

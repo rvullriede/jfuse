@@ -95,6 +95,9 @@ final class FuseImpl extends Fuse {
 			case REMOVE_XATTR -> fuse_operations.removexattr(fuseOperationsStruct, fuse_operations.removexattr.allocate(this::removexattr, fuseArena));
 			case RENAME -> fuse_operations.rename(fuseOperationsStruct, fuse_operations.rename.allocate(this::rename, fuseArena));
 			case RMDIR -> fuse_operations.rmdir(fuseOperationsStruct, fuse_operations.rmdir.allocate(this::rmdir, fuseArena));
+			case SET_BKUPTIME -> fuse_operations.setbkuptime(fuseOperationsStruct, fuse_operations.setbkuptime.allocate(this::setbkuptime, fuseArena));
+			case SET_CHGTIME -> fuse_operations.setchgtime(fuseOperationsStruct, fuse_operations.setchgtime.allocate(this::setchgtime, fuseArena));
+			case SET_CRTIME -> fuse_operations.setcrtime(fuseOperationsStruct, fuse_operations.setcrtime.allocate(this::setcrtime, fuseArena));
 			case SET_XATTR -> fuse_operations.setxattr(fuseOperationsStruct, fuse_operations.setxattr.allocate(this::setxattr, fuseArena));
 			case STATFS -> fuse_operations.statfs(fuseOperationsStruct, fuse_operations.statfs.allocate(this::statfs, fuseArena));
 			case SYMLINK -> fuse_operations.symlink(fuseOperationsStruct, fuse_operations.symlink.allocate(this::symlink, fuseArena));
@@ -264,6 +267,21 @@ final class FuseImpl extends Fuse {
 				return fuseOperations.utimens(path.getString(0), new TimeSpecImpl(time0), new TimeSpecImpl(time1), null);
 			}
 		}
+	}
+
+	@VisibleForTesting
+	int setcrtime(MemorySegment path, MemorySegment tv) {
+		return fuseOperations.setcrtime(path.getString(0), new TimeSpecImpl(tv));
+	}
+
+	@VisibleForTesting
+	int setchgtime(MemorySegment path, MemorySegment tv) {
+		return fuseOperations.setchgtime(path.getString(0), new TimeSpecImpl(tv));
+	}
+
+	@VisibleForTesting
+	int setbkuptime(MemorySegment path, MemorySegment tv) {
+		return fuseOperations.setbkuptime(path.getString(0), new TimeSpecImpl(tv));
 	}
 
 	private int write(MemorySegment path, MemorySegment buf, long size, long offset, MemorySegment fi) {
